@@ -1,25 +1,37 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from 'react';
+import * as axios from 'axios'
+import { Users } from './User';
 
 function App() {
+
+  const [users, setUsers] = useState<Users>([])
+
+  useEffect(()=>{
+    // App.tsxのマウント時にユーザー情報を取得する
+    const getUser = async () => {
+      axios.default.get<Users>('https://jsonplaceholder.typicode.com/users').then((result) => {
+        setUsers(result.data)
+      })
+    }
+    getUser()
+  },[])
+
+  if (users.length === 0) {
+    return <p>Loading...</p>
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+    {users.map((user)=>{
+      return (
+        <div key={user.id}>
+          <p data-testid='id'>{user.id}</p>
+          <p>{user.name}</p>
+          <p></p>
+        </div>
+      )
+    })}
+    </>
   );
 }
 
